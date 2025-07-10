@@ -86,11 +86,6 @@
 <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycbwCB32kIcYHuSjnmaqkM4TZW5paT0_RoEfwIPy8QrQ3YiQZ_ixP5UJfJWg6tnvc0eOa/exec";
 
-  const userPasswords = {
-    "Song082": "Song",
-    "Nawel768": "Nawel"
-  };
-
   async function cargarArchivos() {
     const loading = document.getElementById("loading");
     const menu = document.getElementById("menu");
@@ -120,16 +115,20 @@
     }
   }
 
-  function mostrarArchivo(url) {
-    const acceso = sessionStorage.getItem("acceso_valido");
-
-    if (!acceso) {
+  async function mostrarArchivo(url) {
+    const stored = JSON.parse(sessionStorage.getItem("acceso_valido"));
+    const now = Date.now();
+    if (!stored || now - stored.time > 24 * 60 * 60 * 1000) {
       const pass = prompt("Introduce tu contraseña de entrenador:");
-      if (!userPasswords[pass]) {
-        alert("❌ Contraseña incorrecta.");
+      try {
+        const res = await fetch(GAS_URL + "?validar=" + encodeURIComponent(pass));
+        const result = await res.json();
+        if (result.status !== "ok") throw new Error();
+        sessionStorage.setItem("acceso_valido", JSON.stringify({ value: true, time: now }));
+      } catch (err) {
+        alert("❌ Contraseña incorrecta o verificación fallida.");
         return;
       }
-      sessionStorage.setItem("acceso_valido", "true");
     }
 
     const viewer = document.getElementById("viewer");

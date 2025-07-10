@@ -100,13 +100,18 @@
 
       const menu = document.getElementById("menu");
 
+            let index = 0;
+      
       for (const folderName in data) {
+        const folderId = "sub-" + index;
         const folder = document.createElement("div");
         folder.className = "folder";
         folder.textContent = "📁 " + folderName;
+        folder.setAttribute("data-target", folderId);
 
         const sub = document.createElement("div");
         sub.className = "subfiles";
+        sub.id = folderId;
 
         data[folderName].forEach(file => {
           const f = document.createElement("div");
@@ -117,11 +122,15 @@
         });
 
         folder.onclick = () => {
-          sub.style.display = sub.style.display === "block" ? "none" : "block";
+          const targetId = folder.getAttribute("data-target");
+          const el = document.getElementById(targetId);
+          el.classList.toggle("open");
+          el.style.display = el.classList.contains("open") ? "block" : "none";
         };
 
         menu.appendChild(folder);
         menu.appendChild(sub);
+        index++;
       }
     }
 

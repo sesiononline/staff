@@ -116,27 +116,26 @@
   }
 
   async function mostrarArchivo(url) {
-    if (!url) return;
-    const stored = JSON.parse(sessionStorage.getItem("acceso_valido"));
-    const now = Date.now();
-    if (!stored || now - stored.time > 24 * 60 * 60 * 1000) {
-      const pass = prompt("Introduce tu contraseña de entrenador:");
-      try {
-        const res = await fetch(GAS_URL + "?validar=" + encodeURIComponent(pass));
-        const result = await res.json();
-        if (result.status !== "ok") throw new Error();
-        sessionStorage.setItem("acceso_valido", JSON.stringify({ value: true, time: now }));
-      } catch (err) {
-        alert("❌ Contraseña incorrecta o verificación fallida.");
-        return;
-      }
+  if (!url) return;
+  const stored = JSON.parse(sessionStorage.getItem("acceso_valido"));
+  const now = Date.now();
+  if (!stored || now - stored.time > 24 * 60 * 60 * 1000) {
+    const pass = prompt("Introduce tu contraseña de entrenador:");
+    try {
+      const res = await fetch(GAS_URL + "?validar=" + encodeURIComponent(pass));
+      const result = await res.json();
+      if (result.status !== "ok") throw new Error();
+      sessionStorage.setItem("acceso_valido", JSON.stringify({ value: true, time: now }));
+    } catch (err) {
+      alert("❌ Contraseña incorrecta o verificación fallida.");
+      return;
     }
-
-    document.getElementById("fileSelect").innerHTML = '<option value="">Selecciona archivo</option>';
-
-    const viewer = document.getElementById("viewer");
-    viewer.innerHTML = `<iframe src="${url}"></iframe>`;
   }
+
+  const viewer = document.getElementById("viewer");
+  viewer.innerHTML = `<iframe src="${url}?t=${Date.now()}"></iframe>`;
+}
+
 </script>
 </body>
 </html>

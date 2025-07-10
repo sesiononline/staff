@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuerpo Técnico - Temporada 25-26</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: row;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background: #0a3d62;
+      color: white;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    .sidebar h1 {
+      font-size: 20px;
+      text-align: center;
+      margin: 10px 0 15px;
+    }
+    .logo-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      justify-content: center;
+    }
+    .logo-title img {
+      height: 30px;
+    }
+    .folder {
+      cursor: pointer;
+      font-weight: bold;
+      margin: 10px 0 5px;
+    }
+    .subfiles {
+      display: none;
+      margin-left: 15px;
+    }
+    .file {
+      cursor: pointer;
+      margin: 4px 0;
+      color: #dcdde1;
+    }
+    .main {
+      flex-grow: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    iframe {
+      width: 100%;
+      height: 90vh;
+      border: none;
+    }
+    .download {
+      margin-top: 10px;
+    }
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h1>Cuerpo Técnico</h1>
+    <div class="logo-title">
+      <img src="logo.png" alt="Club Logo" />
+      <span>Temporada 25-26</span>
+    </div>
+    <div id="menu"></div>
+  </div>
+
+  <div class="main">
+    <div id="viewer"></div>
+  </div>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwCB32kIcYHuSjnmaqkM4TZW5paT0_RoEfwIPy8QrQ3YiQZ_ixP5UJfJWg6tnvc0eOa/exec"; // ← 替换为你的部署地址
+
+    const userPasswords = {
+      "Song082": "Song",
+      "Nawel768": "Nawel"
+    };
+
+    async function cargarEstructura() {
+      const res = await fetch(GAS_URL);
+      const data = await res.json();
+
+      const menu = document.getElementById("menu");
+
+      for (const folderName in data) {
+        const folder = document.createElement("div");
+        folder.className = "folder";
+        folder.textContent = "📁 " + folderName;
+
+        const sub = document.createElement("div");
+        sub.className = "subfiles";
+
+        data[folderName].forEach(file => {
+          const f = document.createElement("div");
+          f.className = "file";
+          f.textContent = file.name;
+          f.onclick = () => mostrarArchivo(file.url);
+          sub.appendChild(f);
+        });
+
+        folder.onclick = () => {
+          sub.style.display = sub.style.display === "block" ? "none" : "block";
+        };
+
+        menu.appendChild(folder);
+        menu.appendChild(sub);
+      }
+    }
+
+    function mostrarArchivo(url) {
+      const pass = prompt("Introduce tu contraseña de entrenador:");
+      if (!userPasswords[pass]) {
+        alert("❌ Contraseña incorrecta.");
+        return;
+      }
+      const viewer = document.getElementById("viewer");
+      viewer.innerHTML = `
+        <iframe src="${url}"></iframe>
+        <div class='download'>
+          <a href="${url}" download>⬇️ Descargar archivo</a>
+        </div>
+      `;
+    }
+
+    cargarEstructura();
+  </script>
+</body>
+</html>

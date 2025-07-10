@@ -11,12 +11,12 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
-      overflow: hidden;
     }
     .topbar {
       background: #0a3d62;
       color: white;
-      padding: 10px;
+      padding: 20px 10px 10px;
+      box-sizing: border-box;
     }
     .topbar-header {
       display: flex;
@@ -26,7 +26,7 @@
       margin-bottom: 10px;
     }
     .topbar-header img {
-      height: 30px;
+      height: 32px;
     }
     .topbar h1 {
       font-size: 20px;
@@ -50,7 +50,7 @@
     }
     iframe {
       width: 100%;
-      height: 100%;
+      height: calc(100vh - 170px);
       border: none;
     }
   </style>
@@ -58,12 +58,12 @@
 <body>
   <div class="topbar">
     <div class="topbar-header">
-      <img src="FE Grama.png" alt="Club Logo" />
+      <img id="clubLogo" src="FE Grama.png" alt="Club Logo" />
       <h1>Cuerpo Técnico</h1>
     </div>
     <select id="temporadaSelect" onchange="cargarArchivos()">
-      <option value="" data-folder-id="">Selecciona temporada</option>
-      <option value="25-26" data-folder-id="1Xa6VBUGbcJ5cWX-AhqgAQ-kx3_evJK3O">Temporada 25-26</option>
+      <option value="" data-folder-id="" data-logo="FE Grama.png">Selecciona temporada</option>
+      <option value="25-26" data-folder-id="1Xa6VBUGbcJ5cWX-AhqgAQ-kx3_evJK3O" data-logo="FE Grama.png">Temporada 25-26</option>
     </select>
     <select id="fileSelect" onchange="mostrarArchivo(this.value)">
       <option value="">Selecciona archivo</option>
@@ -81,8 +81,14 @@
   async function cargarArchivos() {
     const temporadaSelect = document.getElementById("temporadaSelect");
     const folderId = temporadaSelect.options[temporadaSelect.selectedIndex].dataset.folderId;
+    const logoPath = temporadaSelect.options[temporadaSelect.selectedIndex].dataset.logo;
     const fileSelect = document.getElementById("fileSelect");
     const loading = document.getElementById("loading");
+
+    // Actualiza el logo dinámicamente
+    const logoImg = document.getElementById("clubLogo");
+    if (logoPath) logoImg.src = logoPath;
+
     fileSelect.innerHTML = '<option value="">Selecciona archivo</option>';
     if (!folderId) return;
     loading.style.display = "block";

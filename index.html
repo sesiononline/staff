@@ -9,63 +9,58 @@
       font-family: sans-serif;
       margin: 0;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       height: 100vh;
       overflow: hidden;
     }
-    .sidebar {
-      width: 100%;
-      max-width: 250px;
+    .topbar {
       background: #0a3d62;
       color: white;
       padding: 10px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
     }
-    .sidebar h1 {
+    .topbar-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .topbar-header img {
+      height: 30px;
+    }
+    .topbar h1 {
       font-size: 20px;
-      text-align: center;
-      margin: 10px 0;
+      margin: 0;
     }
-    select {
+    .topbar select {
       width: 100%;
       padding: 8px;
       font-size: 14px;
       margin-bottom: 10px;
     }
-    .file {
-      cursor: pointer;
-      margin: 4px 0;
-      color: #dcdde1;
-      font-size: 14px;
-      font-style: italic;
+    #loading {
+      text-align: center;
+      color: #ccc;
+      padding: 5px 0;
     }
     .main {
       flex-grow: 1;
-      padding: 0;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
     iframe {
       width: 100%;
-      height: 100vh;
+      height: 100%;
       border: none;
-    }
-    #loading {
-      text-align: center;
-      color: #ccc;
-      padding: 10px 0;
-    }
-    @media (max-width: 768px) {
-      .sidebar {
-        max-width: 100%;
-      }
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h1>Cuerpo Técnico</h1>
+  <div class="topbar">
+    <div class="topbar-header">
+      <img src="FE Grama.png" alt="Club Logo" />
+      <h1>Cuerpo Técnico</h1>
+    </div>
     <select id="temporadaSelect" onchange="cargarArchivos()">
       <option value="" data-folder-id="">Selecciona temporada</option>
       <option value="25-26" data-folder-id="1Xa6VBUGbcJ5cWX-AhqgAQ-kx3_evJK3O">Temporada 25-26</option>

@@ -86,72 +86,56 @@
     <div id="viewer"></div>
   </div>
 
-  <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwCB32kIcYHuSjnmaqkM4TZW5paT0_RoEfwIPy8QrQ3YiQZ_ixP5UJfJWg6tnvc0eOa/exec"; // ← 替换为你的部署地址
+<script>
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwCB32kIcYHuSjnmaqkM4TZW5paT0_RoEfwIPy8QrQ3YiQZ_ixP5UJfJWg6tnvc0eOa/exec";
 
-    const userPasswords = {
-      "Song082": "Song",
-      "Nawel768": "Nawel"
-    };
+  const userPasswords = {
+    "Song082": "Song",
+    "Nawel768": "Nawel"
+  };
 
-    async function cargarEstructura() {
-      const res = await fetch(GAS_URL);
-      const data = await res.json();
+  async function cargarArchivos() {
+    const res = await fetch(GAS_URL);
+    const data = await res.json();
 
-      const menu = document.getElementById("menu");
+    const menu = document.getElementById("menu");
+    menu.innerHTML = ""; // 清空旧内容
 
-            let index = 0;
-      
-            let index = 0;
-      for (const folderName in data) {
-        const folderId = "sub-" + index;
-        const folder = document.createElement("div");
-        folder.className = "folder";
-        folder.textContent = "📁 " + folderName;
-        folder.setAttribute("data-target", folderId);
+    data.forEach(file => {
+      const f = document.createElement("div");
+      f.className = "file";
+      f.textContent = file.name;
+      f.onclick = () => mostrarArchivo(file.url);
+      menu.appendChild(f);
+    });
+  }
 
-        const sub = document.createElement("div");
-        sub.className = "subfiles";
-        sub.id = folderId;
-
-        data[folderName].forEach(file => {
-          const f = document.createElement("div");
-          f.className = "file";
-          f.textContent = file.name;
-          f.onclick = () => mostrarArchivo(file.url);
-          sub.appendChild(f);
-        });
-
-        folder.onclick = () => {
-          const targetId = folder.getAttribute("data-target");
-          const el = document.getElementById(targetId);
-          el.classList.toggle("open");
-          el.style.display = el.classList.contains("open") ? "block" : "none";
-        };
-
-        menu.appendChild(folder);
-        menu.appendChild(sub);
-        index++;
-      }
-
+  function mostrarArchivo(url) {
+    const pass = prompt("Introduce tu contraseña de entrenador:");
+    if (!userPasswords[pass]) {
+      alert("❌ Contraseña incorrecta.");
+      return;
     }
+    const viewer = document.getElementById("viewer");
+    viewer.innerHTML = `
+      <iframe src="${url}"></iframe>
+      <div class='download'>
+        <a href="${url}" download>⬇️ Descargar archivo</a>
+      </div>
+    `;
+  }
 
-    function mostrarArchivo(url) {
-      const pass = prompt("Introduce tu contraseña de entrenador:");
-      if (!userPasswords[pass]) {
-        alert("❌ Contraseña incorrecta.");
-        return;
-      }
-      const viewer = document.getElementById("viewer");
-      viewer.innerHTML = `
-        <iframe src="${url}"></iframe>
-        <div class='download'>
-          <a href="${url}" download>⬇️ Descargar archivo</a>
-        </div>
-      `;
+  // solo se carga archivos si clican en la cabecera
+  function toggleTemporada() {
+    const menu = document.getElementById("menu");
+    if (menu.dataset.opened === "true") {
+      menu.innerHTML = "";
+      menu.dataset.opened = "false";
+    } else {
+      cargarArchivos();
+      menu.dataset.opened = "true";
     }
-
-    cargarEstructura();
-  </script>
+  }
+</script>
 </body>
 </html>

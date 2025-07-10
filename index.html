@@ -75,10 +75,10 @@
 <body>
   <div class="sidebar">
     <h1>Cuerpo Técnico</h1>
-    <div class="logo-title">
-      <img src="FE Grama.png" alt="Club Logo" />
-      <span>Temporada 25-26</span>
-    </div>
+    <div class="logo-title" onclick="toggleAllFolders()" style="cursor: pointer;">
+  <img src="FE Grama.png" alt="Club Logo" />
+  <span>Temporada 25-26 ⬇️</span>
+</div>
     <div id="menu"></div>
   </div>
 
@@ -102,6 +102,7 @@
 
             let index = 0;
       
+            let index = 0;
       for (const folderName in data) {
         const folderId = "sub-" + index;
         const folder = document.createElement("div");
@@ -132,6 +133,7 @@
         menu.appendChild(sub);
         index++;
       }
+
     }
 
     function mostrarArchivo(url) {

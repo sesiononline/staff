@@ -30,18 +30,10 @@
       gap: 10px;
       margin-bottom: 15px;
       justify-content: center;
+      cursor: pointer;
     }
     .logo-title img {
       height: 30px;
-    }
-    .folder {
-      cursor: pointer;
-      font-weight: bold;
-      margin: 10px 0 5px;
-    }
-    .subfiles {
-      display: none;
-      margin-left: 15px;
     }
     .file {
       cursor: pointer;
@@ -61,6 +53,11 @@
     .download {
       margin-top: 10px;
     }
+    #loading {
+      text-align: center;
+      color: #ccc;
+      padding-top: 20px;
+    }
     @media (max-width: 768px) {
       body {
         flex-direction: column;
@@ -75,10 +72,11 @@
 <body>
   <div class="sidebar">
     <h1>Cuerpo Técnico</h1>
-    <div class="logo-title" onclick="toggleTemporada()" style="cursor: pointer;">
-  <img src="FE Grama.png" alt="Club Logo" />
-  <span>Temporada 25-26</span>
-</div>
+    <div class="logo-title" onclick="toggleTemporada()">
+      <img src="FE Grama.png" alt="Club Logo" />
+      <span>Temporada 25-26</span>
+    </div>
+    <div id="loading" style="display:none;">⏳ Cargando archivos...</div>
     <div id="menu"></div>
   </div>
 
@@ -95,27 +93,46 @@
   };
 
   async function cargarArchivos() {
-    const res = await fetch(GAS_URL);
-    const data = await res.json();
-
+    const loading = document.getElementById("loading");
     const menu = document.getElementById("menu");
-    menu.innerHTML = ""; // 清空旧内容
+    menu.innerHTML = "";
+    loading.style.display = "block";
 
-    data.forEach(file => {
-      const f = document.createElement("div");
-      f.className = "file";
-      f.textContent = file.name;
-      f.onclick = () => mostrarArchivo(file.url);
-      menu.appendChild(f);
-    });
+    try {
+      const res = await fetch(GAS_URL);
+      const data = await res.json();
+      loading.style.display = "none";
+
+      if (data.length === 0) {
+        menu.innerHTML = "<p style='color: #ccc;'>Sin archivos disponibles</p>";
+        return;
+      }
+
+      data.forEach(file => {
+        const f = document.createElement("div");
+        f.className = "file";
+        f.textContent = file.name;
+        f.onclick = () => mostrarArchivo(file.url);
+        menu.appendChild(f);
+      });
+    } catch (err) {
+      loading.style.display = "none";
+      menu.innerHTML = "<p style='color: red;'>Error al cargar archivos.</p>";
+    }
   }
 
   function mostrarArchivo(url) {
-    const pass = prompt("Introduce tu contraseña de entrenador:");
-    if (!userPasswords[pass]) {
-      alert("❌ Contraseña incorrecta.");
-      return;
+    const acceso = sessionStorage.getItem("acceso_valido");
+
+    if (!acceso) {
+      const pass = prompt("Introduce tu contraseña de entrenador:");
+      if (!userPasswords[pass]) {
+        alert("❌ Contraseña incorrecta.");
+        return;
+      }
+      sessionStorage.setItem("acceso_valido", "true");
     }
+
     const viewer = document.getElementById("viewer");
     viewer.innerHTML = `
       <iframe src="${url}"></iframe>
@@ -125,10 +142,10 @@
     `;
   }
 
-  // solo se carga archivos si clican en la cabecera
   function toggleTemporada() {
     const menu = document.getElementById("menu");
-    if (menu.dataset.opened === "true") {
+    const estado = menu.dataset.opened === "true";
+    if (estado) {
       menu.innerHTML = "";
       menu.dataset.opened = "false";
     } else {
